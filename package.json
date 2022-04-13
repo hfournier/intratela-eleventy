@@ -1,0 +1,36 @@
+{
+  "name": "intratela-eleventy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "run-p start:*",
+    "start:eleventy": "eleventy --serve",
+    "start:tailwind": "npx tailwindcss -i styles/tailwind.css -c tailwind.config.js -o _site/style.css --watch",
+    "build": "run-s clean build:eleventy build:tailwind",
+    "build:eleventy": "ELEVENTY_PRODUCTION=true eleventy",
+    "build:tailwind": "NODE_ENV=production npx tailwindcss -i styles/tailwind.css -c tailwind.config.js -o _site/style.css --minify"
+  },
+  "keywords": [
+    "eleventy",
+    "11ty",
+    "tailwind"
+  ],
+  "author": "Henri Fournier",
+  "license": "ISC",
+  "devDependencies": {
+    "@11ty/eleventy": "^1.0.0",
+    "@types/nodemailer": "^6.4.4",
+    "@types/nodemailer-smtp-transport": "^2.7.5",
+    "alpinejs": "^3.9.6",
+    "html-minifier": "^4.0.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.6.2",
+    "prettier-plugin-tailwindcss": "^0.1.8",
+    "tailwindcss": "^3.0.24"
+  },
+  "dependencies": {
+    "@netlify/functions": "^1.0.0",
+    "nodemailer": "^6.7.3"
+  }
+}
