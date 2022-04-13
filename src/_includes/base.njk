@@ -13,7 +13,8 @@
     <meta name="generator" content="eleventy" />
     <title>{{pageTitle}}</title>
     <meta name="description" content="{{pageDescription}}" />
-    <link rel="stylesheet" href="/style.css?v={% version %}" />
+    <link rel="stylesheet" href="/static/styles/fonts.css" />
+    <link rel="stylesheet" href="/static/styles/style.css?v={% version %}" />
     <script defer src="/js/alpine.js?v={% version %}"></script>
     {# <meta name="twitter:card" content="summary_large_image" />
     {% if meta.twitterUsername %}
@@ -39,7 +40,7 @@
     <meta name="twitter:image" content="{{pageSocialImg}}" /> #}
     {% block head %}{% endblock %}
   </head>
-  <body class="bg-stone-50">
+  <body class="bg-stone-50 text-stone-900">
     <div class="flex h-screen flex-col antialiased">
       <header class="w-full bg-stone-900">
         {% include "./partials/header.njk" %}

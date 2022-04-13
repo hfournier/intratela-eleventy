@@ -6,11 +6,11 @@
   "scripts": {
     "start": "run-p start:*",
     "start:eleventy": "eleventy --serve",
-    "start:tailwind": "npx tailwindcss -i styles/tailwind.css -c tailwind.config.js -o _site/style.css --watch",
+    "start:tailwind": "npx tailwindcss -i styles/tailwind.css -c tailwind.config.js -o _site/static/styles/style.css --watch",
     "build": "npm run build:eleventy && npm run build:tailwind",
     "build-dev": "run-s clean build:eleventy build:tailwind",
     "build:eleventy": "ELEVENTY_PRODUCTION=true eleventy",
-    "build:tailwind": "NODE_ENV=production npx tailwindcss -i styles/tailwind.css -c tailwind.config.js -o _site/style.css --minify"
+    "build:tailwind": "NODE_ENV=production npx tailwindcss -i styles/tailwind.css -c tailwind.config.js -o _site/static/styles/style.css --minify"
   },
   "keywords": [
     "eleventy",

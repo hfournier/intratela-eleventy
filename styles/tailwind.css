@@ -2,15 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  @font-face {
-    font-family: "Cunia";
-    src: url("./static/fonts/Cunia-webfont.woff") format("woff");
-    font-weight: normal;
-    font-style: normal;
-  }
-}
-
 @layer components {
   /* header styles */
 
@@ -24,15 +15,15 @@
   }
 
   h1,
-  h2,
-  h3 {
+  h2 {
     @apply text-primary-500;
   }
 
+  h3,
   h4,
   h5,
   h6 {
-    @apply text-secondary-500;
+    @apply text-secondary-600;
   }
 
   a[aria-current="page"] {

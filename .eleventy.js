@@ -13,6 +13,9 @@ module.exports = function (eleventyConfig) {
   // Copy Image Folder to /_site
   eleventyConfig.addPassthroughCopy("./src/static/images");
 
+  // Copy Style Folder to /_site
+  eleventyConfig.addPassthroughCopy("./src/static/styles");
+
   // AlpineJS
   eleventyConfig.addPassthroughCopy({
     "./node_modules/alpinejs/dist/cdn.js": "./js/alpine.js",
