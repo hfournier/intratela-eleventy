@@ -14,20 +14,16 @@
     @apply font-cunia;
   }
 
-  h1,
-  h2 {
-    @apply text-primary-500;
-  }
-
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply text-secondary-600;
-  }
-
   a[aria-current="page"] {
     @apply text-primary-400 hover:text-primary-400;
+  }
+
+  .heading2 {
+    @apply text-2xl uppercase text-primary-500 md:text-3xl lg:text-4xl;
+  }
+
+  .heading3 {
+    @apply text-secondary-600;
   }
 
   /* button styles */
