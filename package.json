@@ -7,7 +7,8 @@
     "start": "run-p start:*",
     "start:eleventy": "eleventy --serve",
     "start:tailwind": "npx tailwindcss -i styles/tailwind.css -c tailwind.config.js -o _site/style.css --watch",
-    "build": "run-s clean build:eleventy build:tailwind",
+    "build": "npm run clean && npm run build:eleventy && npm run build:tailwind",
+    "build-dev": "run-s clean build:eleventy build:tailwind",
     "build:eleventy": "ELEVENTY_PRODUCTION=true eleventy",
     "build:tailwind": "NODE_ENV=production npx tailwindcss -i styles/tailwind.css -c tailwind.config.js -o _site/style.css --minify"
   },

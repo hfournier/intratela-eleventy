@@ -4,5 +4,5 @@ module.exports = {
   siteDescription:
     "We support businesses like yours by providing IT support and web/app development services using the latest technologies, like Svelte, Eleventy, Angular and Tailwind CSS.",
   authorName: "Henri Fournier",
-  // twitterUsername: "5t3ph", // no `@`
+  // twitterUsername: "username", // no `@`
 };
