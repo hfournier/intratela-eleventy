@@ -36,6 +36,7 @@ class MailerService {
           user: process.env.MAIL_LOGIN as string,
           pass: process.env.MAIL_PASSWORD as string,
         },
+        requireTLS: true,
       };
     } else {
       this.smtpConfig = {
@@ -45,14 +46,14 @@ class MailerService {
       };
     }
 
-    this.smtpConfig = {
-      host: "intratela-com.mail.protection.outlook.com",
-      port: 25,
-      secure: false,
-      debug: true,
-      logger: true,
-      ignoreTLS: true,
-    };
+    // this.smtpConfig = {
+    //   host: "intratela-com.mail.protection.outlook.com",
+    //   port: 25,
+    //   secure: false,
+    //   debug: true,
+    //   logger: true,
+    //   requireTLS: true,
+    // };
 
     this.transporter = nodemailer.createTransport(this.smtpConfig);
     this.smOptions = {
@@ -74,7 +75,7 @@ class MailerService {
         address:
           process.env.MAIL_FROM_ADDRESS != null
             ? (process.env.MAIL_FROM_ADDRESS as string)
-            : "website@intratela.com",
+            : "no-reply@intratela.com",
       },
       replyTo: {
         name: fromName,
