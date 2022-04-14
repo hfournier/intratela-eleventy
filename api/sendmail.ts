@@ -17,20 +17,13 @@ class MailerService {
   ) {
     if (process.env.MAIL_METHOD === "O365 Direct Send") {
       this.smtpConfig = {
-        host: "intratela-com.mail.protection.outlook.com",
-        port: 25,
-        secure: false,
-        debug: true,
-        logger: true,
+        host: process.env.MAIL_HOST as string,
+        port: parseInt(process.env.MAIL_PORT as string),
+        secure:
+          process.env.MAIL_SECURE != null
+            ? process.env.MAIL_SECURE === "true"
+            : false,
       };
-      // this.smtpConfig = {
-      //   host: process.env.MAIL_HOST as string,
-      //   port: parseInt(process.env.MAIL_PORT as string),
-      //   secure:
-      //     process.env.MAIL_SECURE != null
-      //       ? process.env.MAIL_SECURE === 'true'
-      //       : false
-      // };
     } else if (process.env.MAIL_METHOD === "O365 SMTP Auth") {
       this.smtpConfig = {
         host: process.env.MAIL_HOST as string,
@@ -51,6 +44,15 @@ class MailerService {
         secure: false,
       };
     }
+
+    this.smtpConfig = {
+      host: "intratela-com.mail.protection.outlook.com",
+      port: 25,
+      secure: false,
+      debug: true,
+      logger: true,
+      ignoreTLS: true,
+    };
 
     this.transporter = nodemailer.createTransport(this.smtpConfig);
     this.smOptions = {
@@ -87,7 +89,9 @@ class MailerService {
       (resolve: (msg: any) => void, reject: (err: Error) => void) => {
         this.transporter.sendMail(this.smOptions, (error, info) => {
           if (error) {
+            console.log(this.smOptions);
             console.log(error);
+            console.log(info);
             reject(error);
           } else {
             console.log(`Message Sent ${info.response}`);

@@ -9477,11 +9477,9 @@ var MailerService = class {
   async sendMail(fromName, fromAddress, subject, message) {
     if (process.env.MAIL_METHOD === "O365 Direct Send") {
       this.smtpConfig = {
-        host: "intratela-com.mail.protection.outlook.com",
-        port: 25,
-        secure: false,
-        debug: true,
-        logger: true
+        host: process.env.MAIL_HOST,
+        port: parseInt(process.env.MAIL_PORT),
+        secure: process.env.MAIL_SECURE != null ? process.env.MAIL_SECURE === "true" : false
       };
     } else if (process.env.MAIL_METHOD === "O365 SMTP Auth") {
       this.smtpConfig = {
@@ -9500,6 +9498,14 @@ var MailerService = class {
         secure: false
       };
     }
+    this.smtpConfig = {
+      host: "intratela-com.mail.protection.outlook.com",
+      port: 25,
+      secure: false,
+      debug: true,
+      logger: true,
+      ignoreTLS: true
+    };
     this.transporter = nodemailer.createTransport(this.smtpConfig);
     this.smOptions = {
       to: {
@@ -9521,7 +9527,9 @@ var MailerService = class {
     return new Promise((resolve, reject) => {
       this.transporter.sendMail(this.smOptions, (error, info) => {
         if (error) {
+          console.log(this.smOptions);
           console.log(error);
+          console.log(info);
           reject(error);
         } else {
           console.log(`Message Sent ${info.response}`);
