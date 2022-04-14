@@ -2,7 +2,11 @@
 layout: base
 ---
 
-<h1 class="mt-16 md:mt-24 lg:mt-32 text-3xl uppercase md:text-4xl lg:text-5xl px-4 text-primary-500">{{ title }}</h1>
+<h1
+  class="mt-16 px-4 text-3xl uppercase text-primary-500 md:mt-24 md:text-4xl lg:mt-32 lg:text-5xl"
+>
+  {{ title }}
+</h1>
 <p class="px-4">{{ description }}</p>
 
 {{ content | safe }}

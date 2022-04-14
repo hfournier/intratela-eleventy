@@ -9477,9 +9477,11 @@ var MailerService = class {
   async sendMail(fromName, fromAddress, subject, message) {
     if (process.env.MAIL_METHOD === "O365 Direct Send") {
       this.smtpConfig = {
-        host: process.env.MAIL_HOST,
-        port: parseInt(process.env.MAIL_PORT),
-        secure: process.env.MAIL_SECURE != null ? process.env.MAIL_SECURE === "true" : false
+        host: "intratela-com.mail.protection.outlook.com",
+        port: 25,
+        secure: false,
+        debug: true,
+        logger: true
       };
     } else if (process.env.MAIL_METHOD === "O365 SMTP Auth") {
       this.smtpConfig = {

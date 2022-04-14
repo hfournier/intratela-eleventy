@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    {%- set pageTitle %}{% if title %}{{ title }} | {% endif %}{{ meta.siteName }}{% endset -%}
-    {%- set pageDescription %}{% if description %}{{ description }}{% else %}{{ meta.siteDescription }}{% endif %}{% endset -%}
-    {# {%- set pageSocialImg %}{{ meta.url }}/previews/{% if title %}{{ title | slug }}{% else %}home{% endif %}.png{% endset -%} #}
+    {%- set pageTitle %}{% if title %}{{ title }} | {% endif %}{{ meta.siteName
+    }}{% endset -%} {%- set pageDescription %}{% if description %}{{ description
+    }}{% else %}{{ meta.siteDescription }}{% endif %}{% endset -%} {# {%- set
+    pageSocialImg %}{{ meta.url }}/previews/{% if title %}{{ title | slug }}{%
+    else %}home{% endif %}.png{% endset -%} #}
     <meta charset="UTF-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta
@@ -16,29 +18,20 @@
     <link rel="stylesheet" href="/static/styles/fonts.css" />
     <link rel="stylesheet" href="/static/styles/style.css?v={% version %}" />
     <script defer src="/js/alpine.js?v={% version %}"></script>
-    {# <meta name="twitter:card" content="summary_large_image" />
+    {#
+    <meta name="twitter:card" content="summary_large_image" />
     {% if meta.twitterUsername %}
-      <meta name="twitter:creator" content="@{{ meta.twitterUsername }}" />
+    <meta name="twitter:creator" content="@{{ meta.twitterUsername }}" />
     {% endif %}
-    <meta
-      name="twitter:title"
-      content="{{pageTitle}}"
-    />
-    <meta
-      name="twitter:description"
-      content="{{pageDescription}}"
-    /> #}
-    <meta
-      name="og:title"
-      content="{{pageTitle}}"
-    />
-    <meta
-      name="og:description"
-      content="{{pageDescription}}"
-    />
-    {# <meta property="og:image" content="{{pageSocialImg}}" />
-    <meta name="twitter:image" content="{{pageSocialImg}}" /> #}
-    {% block head %}{% endblock %}
+    <meta name="twitter:title" content="{{pageTitle}}" />
+    <meta name="twitter:description" content="{{pageDescription}}" />
+    #}
+    <meta name="og:title" content="{{pageTitle}}" />
+    <meta name="og:description" content="{{pageDescription}}" />
+    {#
+    <meta property="og:image" content="{{pageSocialImg}}" />
+    <meta name="twitter:image" content="{{pageSocialImg}}" />
+    #} {% block head %}{% endblock %}
   </head>
   <body class="bg-stone-50 text-stone-900">
     <div class="flex h-screen flex-col antialiased">
