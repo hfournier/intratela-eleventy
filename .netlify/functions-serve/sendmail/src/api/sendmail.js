@@ -183,11 +183,11 @@ var require_package = __commonJS({
   "node_modules/nodemailer/package.json"(exports, module2) {
     module2.exports = {
       name: "nodemailer",
-      version: "6.7.3",
+      version: "6.7.5",
       description: "Easy as cake e-mail sending from your Node.js applications",
       main: "lib/nodemailer.js",
       scripts: {
-        test: "grunt"
+        test: "grunt --trace-warnings"
       },
       repository: {
         type: "git",
@@ -203,25 +203,25 @@ var require_package = __commonJS({
       },
       homepage: "https://nodemailer.com/",
       devDependencies: {
-        "@aws-sdk/client-ses": "3.54.1",
-        "aws-sdk": "2.1096.0",
+        "@aws-sdk/client-ses": "3.79.0",
+        "aws-sdk": "2.1124.0",
         bunyan: "1.8.15",
         chai: "4.3.6",
         "eslint-config-nodemailer": "1.2.0",
         "eslint-config-prettier": "8.5.0",
-        grunt: "1.4.1",
+        grunt: "1.5.2",
         "grunt-cli": "1.4.3",
         "grunt-eslint": "24.0.0",
         "grunt-mocha-test": "0.13.3",
         libbase64: "1.2.1",
-        libmime: "5.0.0",
+        libmime: "5.1.0",
         libqp: "1.1.0",
         mocha: "9.2.2",
         "nodemailer-ntlm-auth": "1.0.1",
         proxy: "1.0.2",
         "proxy-test-server": "1.0.0",
-        sinon: "13.0.1",
-        "smtp-server": "3.10.0"
+        sinon: "13.0.2",
+        "smtp-server": "3.11.0"
       },
       engines: {
         node: ">=6.0.0"
@@ -243,10 +243,10 @@ var require_fetch = __commonJS({
     var packageData = require_package();
     var MAX_REDIRECTS = 5;
     module2.exports = function(url, options) {
-      return fetch(url, options);
+      return nmfetch(url, options);
     };
     module2.exports.Cookies = Cookies;
-    function fetch(url, options) {
+    function nmfetch(url, options) {
       options = options || {};
       options.fetchRes = options.fetchRes || new PassThrough();
       options.cookies = options.cookies || new Cookies();
@@ -401,7 +401,7 @@ var require_fetch = __commonJS({
           }
           options.method = "GET";
           options.body = false;
-          return fetch(urllib.resolve(url, res.headers.location), options);
+          return nmfetch(urllib.resolve(url, res.headers.location), options);
         }
         fetchRes.statusCode = res.statusCode;
         fetchRes.headers = res.headers;
@@ -470,14 +470,18 @@ var require_shared = __commonJS({
     var urllib = require("url");
     var util = require("util");
     var fs = require("fs");
-    var fetch = require_fetch();
+    var nmfetch = require_fetch();
     var dns = require("dns");
     var net = require("net");
     var os = require("os");
     var DNS_TTL = 5 * 60 * 1e3;
     var networkInterfaces = module2.exports.networkInterfaces = os.networkInterfaces();
+    var isFamilySupported = (family) => {
+      const familySupported = Object.keys(networkInterfaces).map((key) => networkInterfaces[key]).reduce((acc, val) => acc.concat(val), []).filter((i) => !i.internal).filter((i) => i.family === "IPv" + family || i.family === family).length > 0;
+      return familySupported;
+    };
     var resolver = (family, hostname, callback) => {
-      const familySupported = Object.keys(networkInterfaces).map((key) => networkInterfaces[key]).reduce((acc, val) => acc.concat(val), []).filter((i) => !i.internal).filter((i) => i.family === "IPv" + family).length > 0;
+      const familySupported = isFamilySupported(family);
       if (!familySupported) {
         return callback(null, []);
       }
@@ -547,7 +551,7 @@ var require_shared = __commonJS({
           };
           dnsCache.set(options.host, {
             value,
-            expires: Date.now() + DNS_TTL
+            expires: Date.now() + (options.dnsTtl || DNS_TTL)
           });
           return callback(null, formatDNSValue(value, {
             cached: false
@@ -570,14 +574,14 @@ var require_shared = __commonJS({
             };
             dnsCache.set(options.host, {
               value,
-              expires: Date.now() + DNS_TTL
+              expires: Date.now() + (options.dnsTtl || DNS_TTL)
             });
             return callback(null, formatDNSValue(value, {
               cached: false
             }));
           }
           try {
-            dns.lookup(options.host, {}, (err3, address) => {
+            dns.lookup(options.host, { all: true }, (err3, addresses3) => {
               if (err3) {
                 if (cached) {
                   return callback(null, formatDNSValue(cached.value, {
@@ -586,6 +590,11 @@ var require_shared = __commonJS({
                   }));
                 }
                 return callback(err3);
+              }
+              let address = addresses3 ? addresses3.filter((addr) => isFamilySupported(addr.family)).map((addr) => addr.address).shift() : false;
+              if (addresses3 && addresses3.length && !address) {
+                let err4 = new Error(`Can not use IPv${addresses3[0].family} addresses with current network`);
+                return callback(err4);
               }
               if (!address && cached) {
                 return callback(null, formatDNSValue(cached.value, {
@@ -598,7 +607,7 @@ var require_shared = __commonJS({
               };
               dnsCache.set(options.host, {
                 value,
-                expires: Date.now() + DNS_TTL
+                expires: Date.now() + (options.dnsTtl || DNS_TTL)
               });
               return callback(null, formatDNSValue(value, {
                 cached: false
@@ -748,7 +757,7 @@ var require_shared = __commonJS({
             callback(null, value);
           });
         } else if (/^https?:\/\//i.test(content.path || content.href)) {
-          contentStream = fetch(content.path || content.href);
+          contentStream = nmfetch(content.path || content.href);
           return resolveStream(contentStream, callback);
         } else if (/^data:/i.test(content.path || content.href)) {
           let parts = (content.path || content.href).match(/^data:((?:[^;]*;)*(?:[^,]*)),(.*)$/i);
@@ -3962,7 +3971,7 @@ var require_mime_node = __commonJS({
     var qp = require_qp();
     var base64 = require_base64();
     var addressparser = require_addressparser();
-    var fetch = require_fetch();
+    var nmfetch = require_fetch();
     var LastNewline = require_last_newline();
     var LeWindows = require_le_windows();
     var LeUnix = require_le_unix();
@@ -4547,7 +4556,7 @@ var require_mime_node = __commonJS({
             setImmediate(() => contentStream.emit("error", new Error("Url access rejected for " + content.href)));
             return contentStream;
           }
-          return fetch(content.href, { headers: content.httpHeaders });
+          return nmfetch(content.href, { headers: content.httpHeaders });
         } else {
           contentStream = new PassThrough();
           setImmediate(() => contentStream.end(content || ""));
@@ -5431,9 +5440,9 @@ var require_dkim = __commonJS({
         this.input = input;
         this.output = output;
         this.output.usingCache = false;
-        this.errored = false;
+        this.hasErrored = false;
         this.input.on("error", (err) => {
-          this.errored = true;
+          this.hasErrored = true;
           this.cleanup();
           output.emit("error", err);
         });
@@ -5456,7 +5465,7 @@ var require_dkim = __commonJS({
         this.cache.pipe(this.output);
       }
       sendNextChunk() {
-        if (this.errored) {
+        if (this.hasErrored) {
           return;
         }
         if (this.readPos >= this.chunks.length) {
@@ -5509,7 +5518,7 @@ var require_dkim = __commonJS({
             while (this.relaxedBody.read() !== null) {
             }
           });
-          this.errored = true;
+          this.hasErrored = true;
           this.output.emit("error", err);
         });
         this.cache.once("close", () => {
@@ -7427,7 +7436,7 @@ var require_xoauth2 = __commonJS({
   "node_modules/nodemailer/lib/xoauth2/index.js"(exports, module2) {
     "use strict";
     var Stream = require("stream").Stream;
-    var fetch = require_fetch();
+    var nmfetch = require_fetch();
     var crypto = require("crypto");
     var shared = require_shared();
     var XOAuth2 = class extends Stream {
@@ -7611,7 +7620,7 @@ var require_xoauth2 = __commonJS({
         let returned = false;
         let chunks = [];
         let chunklen = 0;
-        let req = fetch(url, {
+        let req = nmfetch(url, {
           method: "post",
           headers: params.customHeaders,
           body: payload,
@@ -9360,7 +9369,7 @@ var require_nodemailer = __commonJS({
     var StreamTransport = require_stream_transport();
     var JSONTransport = require_json_transport();
     var SESTransport = require_ses_transport();
-    var fetch = require_fetch();
+    var nmfetch = require_fetch();
     var packageData = require_package();
     var ETHEREAL_API = (process.env.ETHEREAL_API || "https://api.nodemailer.com").replace(/\/+$/, "");
     var ETHEREAL_WEB = (process.env.ETHEREAL_WEB || "https://ethereal.email").replace(/\/+$/, "");
@@ -9411,7 +9420,7 @@ var require_nodemailer = __commonJS({
       apiUrl = apiUrl || ETHEREAL_API;
       let chunks = [];
       let chunklen = 0;
-      let req = fetch(apiUrl + "/user", {
+      let req = nmfetch(apiUrl + "/user", {
         contentType: "application/json",
         method: "POST",
         body: Buffer.from(JSON.stringify({
@@ -9520,12 +9529,9 @@ var MailerService = class {
     return new Promise((resolve, reject) => {
       this.transporter.sendMail(this.smOptions, (error, info) => {
         if (error) {
-          console.log(this.smOptions);
           console.log(error);
-          console.log(info);
           reject(error);
         } else {
-          console.log(`Message Sent ${info.response}`);
           resolve(`Message Sent ${info.response}`);
         }
       });

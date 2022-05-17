@@ -46,15 +46,6 @@ class MailerService {
       };
     }
 
-    // this.smtpConfig = {
-    //   host: "intratela-com.mail.protection.outlook.com",
-    //   port: 25,
-    //   secure: false,
-    //   debug: true,
-    //   logger: true,
-    //   requireTLS: true,
-    // };
-
     this.transporter = nodemailer.createTransport(this.smtpConfig);
     this.smOptions = {
       to: {
@@ -90,12 +81,9 @@ class MailerService {
       (resolve: (msg: any) => void, reject: (err: Error) => void) => {
         this.transporter.sendMail(this.smOptions, (error, info) => {
           if (error) {
-            console.log(this.smOptions);
             console.log(error);
-            console.log(info);
             reject(error);
           } else {
-            console.log(`Message Sent ${info.response}`);
             resolve(`Message Sent ${info.response}`);
           }
         });

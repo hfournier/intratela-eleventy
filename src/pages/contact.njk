@@ -578,8 +578,6 @@ date: 2022-01-04
           message: message.value,
         }).then(
           (result) => {
-            console.log("got result");
-            console.log(result);
             if (result.status === 200) {
               this.resetForm();
               this.successMsg = true;
