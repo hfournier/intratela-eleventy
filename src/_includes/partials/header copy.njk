@@ -1,0 +1,56 @@
+<div
+  class="container mx-auto flex max-w-screen-lg flex-wrap items-center justify-between px-6 py-3"
+  x-data="{ isOpen: false }"
+>
+  <div class="flex flex-shrink-0 items-center py-1 text-white">
+    <a class="flex flex-col gap-0 m-0" href="/">
+      <div class="font-cunia text-primary-600 text-2xl leading-5">Intratela</div>
+      <div class="font-cunia text-secondary-600 text-[1.1rem] leading-4">Technologies</div>
+    </a>
+  </div>
+  <div class="block lg:hidden">
+    <button
+      class="btn btn-fab text-stone-200 hover:bg-stone-800 hover:text-white focus:outline-none"
+      type="button"
+      aria-label="menu"
+      @click="isOpen = !isOpen"
+    >
+      <svg
+        class="h-4 w-4 fill-current"
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
+        :class="{'hidden': isOpen}"
+        }
+      >
+        <title>Menu</title>
+        <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+      </svg>
+      <svg
+        class="h-4 w-4 fill-current"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        stroke="currentColor"
+        :class="{'hidden': !isOpen}"
+        }
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
+  </div>
+  <nav aria-label="Main Navigation"
+    class="transition-height flex w-full flex-col duration-1000 ease-in-out lg:w-auto lg:flex-row lg:items-center gap-x-8 gap-y-4"
+    :class="{'hidden lg:flex lg:flex-row': !isOpen, 'flex flex-col lg:flex lg:flex-row': isOpen}"
+  >
+  {% for link in collections.pages %}
+    <a href="{{ link.url }}" class="mt-2 block rounded px-4 lg:px-0 py-1 text-right text-lg font-semibold text-stone-200 hover:bg-stone-800 hover:text-white focus:outline-none lg:mt-0 lg:hover:bg-transparent" {% if page.url == link.url %} aria-current="page"{% endif %}>
+      {{link.data.title|trim}}
+      </a>
+  {%- endfor %}
+  </nav>
+</div>

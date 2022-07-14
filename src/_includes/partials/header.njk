@@ -1,59 +1,57 @@
 <div
-  class="container mx-auto flex max-w-screen-lg flex-wrap items-center justify-between px-6 py-3"
-  x-data="{ isOpen: false }"
+  class="container mx-auto flex max-w-screen-lg flex-wrap items-center justify-between px-6 py-3 relative bg-stone-900
+         [&>input:checked_~_label>svg>path:first-child]:opacity-0 
+         [&>input:checked_~_label>svg>path:last-child]:opacity-100 
+         [&>input:checked_~_nav]:opacity-100
+         [&>input:checked_~_nav]:translate-y-0"
 >
-  <div class="mr-6 flex flex-shrink-0 items-center py-1 text-white">
-    <a href="/">
-    <svg viewBox="0 0 2400 570" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" class="h-8 w-auto" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2"><g transform="translate(-9625.43)"><g id="Name" transform="matrix(1.17371 0 0 .2375 2920.09 0)"><path style="fill:none" d="M5712.96 0h2044.8v2400h-2044.8z"/><clipPath id="_clip1"><path d="M5712.96 0h2044.8v2400h-2044.8z"/></clipPath><g clip-path="url(#_clip1)"><g id="Name1"><text x="1716.49" y="415.58" style="font-family:'Cunia';font-weight:700;font-size:50px;fill:#c50" transform="matrix(7.27946 0 0 35.97464 -6806.898 -13691.228)">INTRATELA</text><text x="1716.49" y="415.58" style="font-family:'Cunia';font-weight:700;font-size:50px;fill:#07c" transform="matrix(5.25926 0 0 25.99093 -3320.31 -8413.834)">TE<tspan x="1780.04" y="415.58">C</tspan>HNOL<tspan x="1954.14" y="415.58">O</tspan>GIES</text></g></g></g></g></svg>
-    </a>
+  <div class="flex flex-shrink-0 items-center text-white">
+    <a class="m-0 flex flex-col gap-0" href="/">
+      <div class="font-cunia text-2xl leading-5 text-primary-600">
+        Intratela
+      </div>
+      <div class="font-cunia text-[1.1rem] leading-4 text-secondary-500">
+        Technologies
+      </div>
+      <span class="sr-only">Intratela Technologies</span>
+    </a> 
   </div>
-  <div class="block lg:hidden">
-    <button
-      class="btn btn-fab text-stone-200 hover:bg-stone-800 hover:text-white focus:outline-none"
-      type="button"
-      aria-label="menu"
-      @click="isOpen = !isOpen"
-    >
-      <svg
-        class="h-4 w-4 fill-current"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-        :class="{'hidden': isOpen}"
-        }
-      >
-        <title>Menu</title>
-        <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-      </svg>
-      <svg
-        class="h-4 w-4 fill-current"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        stroke="currentColor"
-        :class="{'hidden': !isOpen}"
-        }
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M6 18L18 6M6 6l12 12"
-        />
-      </svg>
-    </button>
-  </div>
-  <nav
-    class="transition-height flex w-full flex-col duration-1000 ease-in-out lg:w-auto lg:flex-row lg:items-center"
-    :class="{'hidden lg:flex lg:flex-row': !isOpen, 'flex flex-col lg:flex lg:flex-row': isOpen}"
+  <input id="menuBtn" type="checkbox" class="hidden" />
+  <label
+    class="text-stone-200 hover:text-white focus:outline-none lg:hidden"
+    for="menuBtn"
   >
-  {% for link in collections.pages %}
-    <a
-      href="{{ link.url }}"
-      class="mt-2 block rounded px-4 py-1 text-right text-lg font-semibold text-stone-200 hover:bg-stone-800 hover:text-white focus:outline-none lg:mt-0 lg:hover:bg-transparent"
-      {% if page.url == link.url %} aria-current="page"{% endif %}
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+      aria-label="Menu toggle button"
     >
-      {{ link.data.title }}
-    </a>
-  {%- endfor %}
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M4 6h16M4 12h16M4 18h16"
+        class="transition-opacity duration-300 ease-in"
+      />
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M6 18L18 6M6 6l12 12"
+        class="opacity-0 transition-opacity duration-300 ease-in"
+      />
+    </svg>
+  </label>
+  <nav
+    aria-label="Main Navigation"
+    class="absolute top-[4.5rem] right-3 -z-10 flex -translate-y-[310px] flex-col gap-x-8 gap-y-4 py-4 lg:py-0 bg-stone-900/90 opacity-0 transition-all duration-700 ease-in-out lg:static lg:flex lg:w-auto lg:translate-y-0 lg:flex-row lg:items-center lg:opacity-100 lg:z-0"
+  >
+    {% for link in collections.pages %}
+    <a href="{{ link.url }}" class="rounded px-4 lg:px-0 py-1 text-right text-lg font-semibold text-stone-200 hover:bg-stone-800 hover:text-white focus:outline-none lg:mt-0 lg:hover:bg-transparent" {% if page.url == link.url %} aria-current="page"{% endif %}>
+      {{link.data.title|trim}}
+      </a>
+    {%- endfor %}
   </nav>
 </div>

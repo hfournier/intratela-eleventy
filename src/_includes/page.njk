@@ -1,12 +1,38 @@
 ---
 layout: base
+permalink: "{{ site_page.title | slug }}/"
+eleventyComputed:
+  title: "{{ site_page.title | trim }}"
+  description: "{{ site_page.description.substring(0, site_page.description.indexOf('<!-- excerpt -->')).trim() }}"
 ---
 
 <h1
-  class="mt-16 px-4 text-3xl uppercase text-primary-500 md:mt-24 md:text-4xl lg:mt-32 lg:text-5xl"
+  class="heading1"
 >
-  {{ title }}
+  {{ site_page.title }}
 </h1>
-<p class="px-4">{{ description }}</p>
+<p class="px-4">{{ site_page.description | safe }}</p>
 
-{{ content | safe }}
+{% for section in site_page.sections %}
+<section
+  class="mt-32 flex flex-col items-center justify-center gap-4 first:mt-24 last:mb-16 sm:flex-row sm:gap-8 even:sm:flex-row-reverse lg:gap-11 first:lg:mt-32"
+>
+  <div class="w-full px-4 sm:w-1/2">{{ section.svg | safe }}</div>
+  <div class="w-full px-4 text-center sm:w-1/2">
+    <h2 class="heading2">{{ section.heading | trim }}</h2>
+    <p class="text-justify">{{ section.text | safe }}</p>
+    {% if section.keywords %}
+    <div class="flex flex-wrap justify-center gap-x-3 gap-y-2 pt-4 sm:gap-x-2">
+      {% for keyword in section.keywords %}
+      <a
+        href="{{ keyword.link }}"
+        target="ref"
+        class="pill pill-secondary whitespace-nowrap transition-transform hover:scale-105 hover:shadow-md"
+        >{{ keyword.label | trim }}</a
+      >
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endfor %}

@@ -1,5 +1,19 @@
 <div
-  class="container mx-auto flex h-10 max-w-screen-lg items-center justify-center text-sm text-black"
+  class="container mx-auto flex flex-col p-4 gap-6 max-w-screen-lg items-center justify-center text-sm"
 >
+  <nav
+    aria-label="Footer Navigation"
+    class="flex gap-6"
+  >
+    <a href="/" class="font-medium hover:underline hover:text-primary-500 [&[aria-current='page']]:text-primary-400" {% if page.url == '/' %} aria-current="page"{% endif %}>
+      Home
+      </a>
+    {% for link in collections.pages %}
+    <a href="{{ link.url }}" class="font-medium hover:underline hover:text-primary-500 [&[aria-current='page']]:text-primary-400" {% if page.url == link.url %} aria-current="page"{% endif %}>
+      {{link.data.title|trim}}
+      </a>
+    {%- endfor %}
+  </nav>
+
   &copy; {% year %} Intratela Technologies
 </div>

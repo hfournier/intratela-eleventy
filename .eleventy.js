@@ -17,9 +17,9 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("./src/static/styles");
 
   // AlpineJS
-  eleventyConfig.addPassthroughCopy({
-    "./node_modules/alpinejs/dist/cdn.js": "./js/alpine.js",
-  });
+  // eleventyConfig.addPassthroughCopy({
+  //   "./node_modules/alpinejs/dist/cdn.js": "./js/alpine.js",
+  // });
 
   eleventyConfig.addShortcode("version", function () {
     return now;
@@ -27,6 +27,12 @@ module.exports = function (eleventyConfig) {
 
   eleventyConfig.addShortcode("year", () => {
     return year;
+  });
+
+  eleventyConfig.setFrontMatterParsingOptions({
+    excerpt: true,
+    // Optional, default is "---"
+    excerpt_separator: "<!-- excerpt -->",
   });
 
   eleventyConfig.addTransform("htmlmin", function (content, outputPath) {
