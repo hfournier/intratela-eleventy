@@ -6,24 +6,28 @@ var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __markAsModule = (target) => __defProp(target, "__esModule", { value: true });
 var __commonJS = (cb, mod) => function __require() {
-  return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 var __export = (target, all) => {
-  __markAsModule(target);
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
 };
-var __reExport = (target, module2, desc) => {
+var __reExport = (target, module2, copyDefault, desc) => {
   if (module2 && typeof module2 === "object" || typeof module2 === "function") {
     for (let key of __getOwnPropNames(module2))
-      if (!__hasOwnProp.call(target, key) && key !== "default")
+      if (!__hasOwnProp.call(target, key) && (copyDefault || key !== "default"))
         __defProp(target, key, { get: () => module2[key], enumerable: !(desc = __getOwnPropDesc(module2, key)) || desc.enumerable });
   }
   return target;
 };
-var __toModule = (module2) => {
-  return __reExport(__markAsModule(__defProp(module2 != null ? __create(__getProtoOf(module2)) : {}, "default", module2 && module2.__esModule && "default" in module2 ? { get: () => module2.default, enumerable: true } : { value: module2, enumerable: true })), module2);
+var __toESM = (module2, isNodeMode) => {
+  return __reExport(__markAsModule(__defProp(module2 != null ? __create(__getProtoOf(module2)) : {}, "default", !isNodeMode && module2 && module2.__esModule ? { get: () => module2.default, enumerable: true } : { value: module2, enumerable: true })), module2);
 };
+var __toCommonJS = /* @__PURE__ */ ((cache) => {
+  return (module2, temp) => {
+    return cache && cache.get(module2) || (temp = __reExport(__markAsModule({}), module2, 1), cache && cache.set(module2, temp), temp);
+  };
+})(typeof WeakMap !== "undefined" ? /* @__PURE__ */ new WeakMap() : 0);
 
 // node_modules/nodemailer/lib/fetch/cookies.js
 var require_cookies = __commonJS({
@@ -183,7 +187,7 @@ var require_package = __commonJS({
   "node_modules/nodemailer/package.json"(exports, module2) {
     module2.exports = {
       name: "nodemailer",
-      version: "6.7.5",
+      version: "6.7.7",
       description: "Easy as cake e-mail sending from your Node.js applications",
       main: "lib/nodemailer.js",
       scripts: {
@@ -203,24 +207,24 @@ var require_package = __commonJS({
       },
       homepage: "https://nodemailer.com/",
       devDependencies: {
-        "@aws-sdk/client-ses": "3.79.0",
-        "aws-sdk": "2.1124.0",
+        "@aws-sdk/client-ses": "3.121.0",
+        "aws-sdk": "2.1168.0",
         bunyan: "1.8.15",
         chai: "4.3.6",
         "eslint-config-nodemailer": "1.2.0",
         "eslint-config-prettier": "8.5.0",
-        grunt: "1.5.2",
+        grunt: "1.5.3",
         "grunt-cli": "1.4.3",
         "grunt-eslint": "24.0.0",
         "grunt-mocha-test": "0.13.3",
         libbase64: "1.2.1",
         libmime: "5.1.0",
         libqp: "1.1.0",
-        mocha: "9.2.2",
+        mocha: "10.0.0",
         "nodemailer-ntlm-auth": "1.0.1",
         proxy: "1.0.2",
         "proxy-test-server": "1.0.0",
-        sinon: "13.0.2",
+        sinon: "14.0.0",
         "smtp-server": "3.11.0"
       },
       engines: {
@@ -475,13 +479,23 @@ var require_shared = __commonJS({
     var net = require("net");
     var os = require("os");
     var DNS_TTL = 5 * 60 * 1e3;
-    var networkInterfaces = module2.exports.networkInterfaces = os.networkInterfaces();
-    var isFamilySupported = (family) => {
-      const familySupported = Object.keys(networkInterfaces).map((key) => networkInterfaces[key]).reduce((acc, val) => acc.concat(val), []).filter((i) => !i.internal).filter((i) => i.family === "IPv" + family || i.family === family).length > 0;
+    var networkInterfaces;
+    try {
+      networkInterfaces = os.networkInterfaces();
+    } catch (err) {
+    }
+    module2.exports.networkInterfaces = networkInterfaces;
+    var isFamilySupported = (family, allowInternal) => {
+      let networkInterfaces2 = module2.exports.networkInterfaces;
+      if (!networkInterfaces2) {
+        return true;
+      }
+      const familySupported = Object.keys(networkInterfaces2).map((key) => networkInterfaces2[key]).reduce((acc, val) => acc.concat(val), []).filter((i) => !i.internal || allowInternal).filter((i) => i.family === "IPv" + family || i.family === family).length > 0;
       return familySupported;
     };
-    var resolver = (family, hostname, callback) => {
-      const familySupported = isFamilySupported(family);
+    var resolver = (family, hostname, options, callback) => {
+      options = options || {};
+      const familySupported = isFamilySupported(family, options.allowInternalNetworkInterfaces);
       if (!familySupported) {
         return callback(null, []);
       }
@@ -501,7 +515,7 @@ var require_shared = __commonJS({
         return callback(null, Array.isArray(addresses) ? addresses : [].concat(addresses || []));
       });
     };
-    var dnsCache = module2.exports.dnsCache = new Map();
+    var dnsCache = module2.exports.dnsCache = /* @__PURE__ */ new Map();
     var formatDNSValue = (value, extra) => {
       if (!value) {
         return Object.assign({}, extra || {});
@@ -534,7 +548,7 @@ var require_shared = __commonJS({
           }));
         }
       }
-      resolver(4, options.host, (err, addresses) => {
+      resolver(4, options.host, options, (err, addresses) => {
         if (err) {
           if (cached) {
             return callback(null, formatDNSValue(cached.value, {
@@ -557,7 +571,7 @@ var require_shared = __commonJS({
             cached: false
           }));
         }
-        resolver(6, options.host, (err2, addresses2) => {
+        resolver(6, options.host, options, (err2, addresses2) => {
           if (err2) {
             if (cached) {
               return callback(null, formatDNSValue(cached.value, {
@@ -844,7 +858,7 @@ var require_shared = __commonJS({
     }
     function createDefaultLogger(levels) {
       let levelMaxLen = 0;
-      let levelNames = new Map();
+      let levelNames = /* @__PURE__ */ new Map();
       levels.forEach((level) => {
         if (level.length > levelMaxLen) {
           levelMaxLen = level.length;
@@ -893,7 +907,7 @@ var require_mime_types = __commonJS({
     var path = require("path");
     var defaultMimeType = "application/octet-stream";
     var defaultExtension = "bin";
-    var mimeTypes = new Map([
+    var mimeTypes = /* @__PURE__ */ new Map([
       ["application/acad", "dwg"],
       ["application/applixware", "aw"],
       ["application/arj", "arj"],
@@ -1418,7 +1432,7 @@ var require_mime_types = __commonJS({
       ["application/x-bittorrent", "torrent"],
       ["application/x-bsh", ["bsh", "sh", "shar"]],
       ["application/x-bytecode.elisp", "elc"],
-      ["applicaiton/x-bytecode.python", "pyc"],
+      ["application/x-bytecode.python", "pyc"],
       ["application/x-bzip", "bz"],
       ["application/x-bzip2", ["boz", "bz2"]],
       ["application/x-cdf", "cdf"],
@@ -1917,7 +1931,7 @@ var require_mime_types = __commonJS({
       ["xgl/drawing", "xgz"],
       ["xgl/movie", "xmz"]
     ]);
-    var extensions = new Map([
+    var extensions = /* @__PURE__ */ new Map([
       ["123", "application/vnd.lotus-1-2-3"],
       ["323", "text/h323"],
       ["*", "application/octet-stream"],
@@ -2574,7 +2588,7 @@ var require_mime_types = __commonJS({
       ["pwz", "application/vnd.ms-powerpoint"],
       ["py", "text/x-script.phyton"],
       ["pya", "audio/vnd.ms-playready.media.pya"],
-      ["pyc", "applicaiton/x-bytecode.python"],
+      ["pyc", "application/x-bytecode.python"],
       ["pyv", "video/vnd.ms-playready.media.pyv"],
       ["qam", "application/vnd.epson.quickanime"],
       ["qbo", "application/vnd.intu.qbo"],
@@ -3962,7 +3976,6 @@ var require_mime_node = __commonJS({
   "node_modules/nodemailer/lib/mime-node/index.js"(exports, module2) {
     "use strict";
     var crypto = require("crypto");
-    var os = require("os");
     var fs = require("fs");
     var punycode = require("punycode");
     var PassThrough = require("stream").PassThrough;
@@ -4710,7 +4723,7 @@ var require_mime_node = __commonJS({
         return encoding;
       }
       _generateMessageId() {
-        return "<" + [2, 2, 2, 6].reduce((prev, len) => prev + "-" + crypto.randomBytes(len).toString("hex"), crypto.randomBytes(4).toString("hex")) + "@" + (this.getEnvelope().from || this.hostname || os.hostname() || "localhost").split("@").pop() + ">";
+        return "<" + [2, 2, 2, 6].reduce((prev, len) => prev + "-" + crypto.randomBytes(len).toString("hex"), crypto.randomBytes(4).toString("hex")) + "@" + (this.getEnvelope().from || this.hostname || "localhost").split("@").pop() + ">";
       }
     };
     module2.exports = MimeNode;
@@ -5374,9 +5387,9 @@ var require_sign = __commonJS({
       return mimeFuncs.foldLines("DKIM-Signature: " + dkim, 76) + ";\r\n b=";
     }
     function relaxedHeaders(headers, fieldNames, skipFields) {
-      let includedFields = new Set();
-      let skip = new Set();
-      let headerFields = new Map();
+      let includedFields = /* @__PURE__ */ new Set();
+      let skip = /* @__PURE__ */ new Set();
+      let headerFields = /* @__PURE__ */ new Map();
       (skipFields || "").toLowerCase().split(":").forEach((field) => {
         skip.add(field.trim());
       });
@@ -5632,7 +5645,7 @@ var require_http_proxy_client = __commonJS({
         connect = net.connect.bind(net);
       }
       let finished = false;
-      let tempSocketErr = function(err) {
+      let tempSocketErr = (err) => {
         if (finished) {
           return;
         }
@@ -5642,6 +5655,11 @@ var require_http_proxy_client = __commonJS({
         } catch (E) {
         }
         callback(err);
+      };
+      let timeoutErr = () => {
+        let err = new Error("Proxy socket timed out");
+        err.code = "ETIMEDOUT";
+        tempSocketErr(err);
       };
       socket = connect(options, () => {
         if (finished) {
@@ -5680,11 +5698,15 @@ var require_http_proxy_client = __commonJS({
               return callback(new Error("Invalid response from proxy" + (match && ": " + match[1] || "")));
             }
             socket.removeListener("error", tempSocketErr);
+            socket.removeListener("timeout", timeoutErr);
+            socket.setTimeout(0);
             return callback(null, socket);
           }
         };
         socket.on("data", onSocketData);
       });
+      socket.setTimeout(httpProxyClient.timeout || 30 * 1e3);
+      socket.on("timeout", timeoutErr);
       socket.once("error", tempSocketErr);
     }
     module2.exports = httpProxyClient;
@@ -5985,7 +6007,7 @@ var require_mailer = __commonJS({
           compile: [],
           stream: []
         };
-        this.meta = new Map();
+        this.meta = /* @__PURE__ */ new Map();
         this.dkim = this.options.dkim ? new DKIM(this.options.dkim) : false;
         this.transporter = transporter;
         this.transporter.mailer = this;
@@ -6378,6 +6400,7 @@ var require_smtp_connection = __commonJS({
         this.alreadySecured = !!this.options.secured;
         this.port = Number(this.options.port) || (this.secureConnection ? 465 : 587);
         this.host = this.options.host || "localhost";
+        this.allowInternalNetworkInterfaces = this.options.allowInternalNetworkInterfaces || false;
         if (typeof this.options.secure === "undefined" && this.port === 465) {
           this.secureConnection = true;
         }
@@ -6386,7 +6409,7 @@ var require_smtp_connection = __commonJS({
           component: this.options.component || "smtp-connection",
           sid: this.id
         });
-        this.customAuth = new Map();
+        this.customAuth = /* @__PURE__ */ new Map();
         Object.keys(this.options.customAuth || {}).forEach((key) => {
           let mapKey = (key || "").toString().trim().toUpperCase();
           if (!mapKey) {
@@ -6434,7 +6457,8 @@ var require_smtp_connection = __commonJS({
         }
         let opts = {
           port: this.port,
-          host: this.host
+          host: this.host,
+          allowInternalNetworkInterfaces: this.allowInternalNetworkInterfaces
         };
         if (this.options.localAddress) {
           opts.localAddress = this.options.localAddress;
@@ -7417,8 +7441,13 @@ var require_smtp_connection = __commonJS({
         }
       }
       _getHostname() {
-        let defaultHostname = os.hostname() || "";
-        if (defaultHostname.indexOf(".") < 0) {
+        let defaultHostname;
+        try {
+          defaultHostname = os.hostname() || "";
+        } catch (err) {
+          defaultHostname = "localhost";
+        }
+        if (!defaultHostname || defaultHostname.indexOf(".") < 0) {
           defaultHostname = "[127.0.0.1]";
         }
         if (defaultHostname.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)) {
@@ -7873,6 +7902,11 @@ var require_services = __commonJS({
         host: "smtp.aol.com",
         port: 587
       },
+      Bluewin: {
+        host: "smtpauths.bluewin.ch",
+        domains: ["bluewin.ch"],
+        port: 465
+      },
       DebugMail: {
         host: "debugmail.io",
         port: 25
@@ -8019,8 +8053,8 @@ var require_services = __commonJS({
         secure: true
       },
       SendCloud: {
-        host: "smtpcloud.sohu.com",
-        port: 25
+        host: "smtp.sendcloud.net",
+        port: 2525
       },
       SendGrid: {
         host: "smtp.sendgrid.net",
@@ -8534,6 +8568,12 @@ var require_smtp_pool = __commonJS({
                 }
                 finalize();
               });
+            } else if (!auth && connection.allowsAuth && options.forceAuth) {
+              let err2 = new Error("Authentication info was not provided");
+              err2.code = "NoAuth";
+              returned = true;
+              connection.close();
+              return callback(err2);
             } else {
               finalize();
             }
@@ -8821,6 +8861,12 @@ var require_smtp_transport = __commonJS({
                 }
                 finalize();
               });
+            } else if (!authData && connection.allowsAuth && options.forceAuth) {
+              let err2 = new Error("Authentication info was not provided");
+              err2.code = "NoAuth";
+              returned = true;
+              connection.close();
+              return callback(err2);
             } else {
               finalize();
             }
@@ -9461,7 +9507,7 @@ var require_nodemailer = __commonJS({
       if (!info || !info.response) {
         return false;
       }
-      let infoProps = new Map();
+      let infoProps = /* @__PURE__ */ new Map();
       info.response.replace(/\[([^\]]+)\]$/, (m, props) => {
         props.replace(/\b([A-Z0-9]+)=([^\s]+)/g, (m2, key, value) => {
           infoProps.set(key, value);
@@ -9476,10 +9522,11 @@ var require_nodemailer = __commonJS({
 });
 
 // api/sendmail.ts
-__export(exports, {
+var sendmail_exports = {};
+__export(sendmail_exports, {
   handler: () => handler
 });
-var nodemailer = __toModule(require_nodemailer());
+var nodemailer = __toESM(require_nodemailer());
 var MailerService = class {
   constructor() {
   }
@@ -9569,6 +9616,7 @@ var handler = async (event, context) => {
     })
   };
 };
+module.exports = __toCommonJS(sendmail_exports);
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   handler

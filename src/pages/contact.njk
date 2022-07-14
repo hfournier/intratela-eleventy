@@ -702,7 +702,7 @@ layout: base
       },
       sendMail: async function (params) {
         // console.log(params);
-        const result = await fetch("/api/sendmail", {
+        const result = await fetch("/api/sendgrid", {
           method: "POST",
 
           headers: {
